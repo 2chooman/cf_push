@@ -26,7 +26,6 @@ read -p "Enter Cloudflare account e-mail: " cf_email
 read -p "Enter Cloudflare API key: " cf_api_key
 read -p "Enter the main domain (e.g. yourdomain.com): " cf_domain_name
 read -p "Enter server external IP: " host_ip
-read -p "Enter path to Apache config file: " apache_config
 read -p "Enter list of subdomains to add (space separated): " subdomains_list_input
 
 cf_account_id=$(query_account_id "$cf_email" "$cf_api_key")
@@ -46,7 +45,6 @@ echo $cf_email
 echo $cf_api_key
 echo $cf_domain_name
 echo $host_ip
-echo $apache_config
 echo $subdomains_list
 echo $cf_account_id
 echo $cf_account_name
@@ -72,15 +70,6 @@ for subdomain in "${subdomains_list[@]}"; do
 
     echo "${push_cf_update_CNAME}\n\n" >> $log_file
 
-    sleep 1s
-    
-    get_serveralias_apache=`grep ServerAlias ${apache_config} | head -1`
-    merge_serveralias_apache=$get_serveralias_apache' '$subdomain_A' www.'$subdomain_A
-
-    push_apache_update=`sed -i "s/${get_serveralias_apache}/${merge_serveralias_apache}/g" $apache_config`
-
-    echo "${merge_serveralias_apache}\n\n" >> $log_file
-    
     sleep 1s
 done
 
